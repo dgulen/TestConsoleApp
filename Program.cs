@@ -80,7 +80,6 @@ namespace TestConsoleApp
             line = 0;
             while (checkPoint != true)
             {
-                Console.WriteLine("HERE");
                 if (way == false)
                 {
                     stars = -2; 
@@ -92,12 +91,10 @@ namespace TestConsoleApp
                     stars = +2;
                     lline = -1;
                     checkPoint = true;
-                    if (temp == 0)
-                        temp = 2;
-                    else if (temp == -1)
-                        temp = 1;
+                    temp = temp + stars;
+                    line = line + lline;
                 }
-                while (temp > 0)
+                while (temp > 0 && temp <=hour)
                 {
                     
                     for (int i = 0; i < line; i++)
@@ -114,11 +111,10 @@ namespace TestConsoleApp
                     }
                     temp = temp + stars;
                     line = line + lline;
-                    Console.WriteLine(temp);
+                    Console.WriteLine();
+
                 }
-                Console.WriteLine(" while  1 bit");
-                Console.WriteLine(temp);
-                Console.WriteLine(line);
+                
             }
             Console.WriteLine("Kum Saatinin Sonu");
         }
