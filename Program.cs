@@ -27,11 +27,17 @@ namespace TestConsoleApp
                     while (loop)
                     {
                         Console.WriteLine("1 ile 80 arasında bir sayı giriniz:");
+                        int X;
                         var num = Console.ReadLine();
+                        while (!Int32.TryParse(num, out X))
+                        {
+                            Console.WriteLine("Not a valid number, try again.");
+                            num = Console.ReadLine();
+                        }
                         if (Convert.ToInt32(num) <= 80 && Convert.ToInt32(num) >= 1)
                         {
                             loop = false;
-                            printHourGlass(Convert.ToInt32(num));
+                            PrintHourGlass(Convert.ToInt32(num));
                         }
                         else
                         {
@@ -41,6 +47,8 @@ namespace TestConsoleApp
                     break;
                 case 3:
                     Console.WriteLine("3. secenek secildi, il ve hava durumu sorgulanacak");
+                    Console.WriteLine("Hava durumu sorgusu için bir il giriniz:");
+                    var city = Console.ReadLine();
 
                     break;
                 default:
@@ -53,8 +61,8 @@ namespace TestConsoleApp
 
         public static int FibonacciSeries(int fib)
         {
-            if (fib <= 1)
-                return fib;
+            if (fib <= 2)
+                return 1;
             return FibonacciSeries(fib - 1) + FibonacciSeries(fib - 2);
         }
         public static int DisplayMenu()
@@ -68,59 +76,23 @@ namespace TestConsoleApp
             var result = Console.ReadLine();
             return Convert.ToInt32(result);
         }
-        public static void printHourGlass(int hour)
+        private static void PrintHourGlass(int couter)
         {
-            int temp;
-            int line;
-            int stars;
-            int lline; // 
-            Boolean way= false; // down
-            Boolean checkPoint = false;
-            temp = hour;
-            line = 0;
-            while (checkPoint != true)
+            for (int row = 0; row < couter ; row++)
             {
-                if (way == false)
+                if (couter % 2 == 0)
                 {
-                    stars = -2; 
-                    lline = +1;
-                    way = true;
+                    if (row == couter / 2)
+                        row++;
                 }
-                else
-                { 
-                    stars = +2;
-                    lline = -1;
-                    checkPoint = true;
-                    temp = temp + stars;
-                    line = line + lline;
-                }
-                while (temp > 0 && temp <=hour)
-                {
-                    
-                    for (int i = 0; i < line; i++)
-                    {
-                        Console.Write(" ");
-                    }
-                    for (int i = 0; i < temp; i++)
-                    {
-                        Console.Write("*");
-                    }
-                    for (int i = 0; i < line; i++)
-                    {
-                        Console.Write(" ");
-                    }
-                    temp = temp + stars;
-                    line = line + lline;
-                    Console.WriteLine();
-
-                }
-                
+                int starCount = Math.Abs(couter - row * 2 - 1) + 1;
+                for (int c = 0; c < couter- starCount; c++)
+                    Console.Write(" ");
+                for (int c = 0; c < starCount; c++)
+                    Console.Write("* ");
+                Console.WriteLine();
             }
-            Console.WriteLine("Kum Saatinin Sonu");
         }
-        
-        
-
     }
 }
 
