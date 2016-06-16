@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Runtime.Serialization.Json;
+using System.IO;
+using System.Web.Script.Serialization;
 
 namespace TestConsoleApp
 {
@@ -18,7 +23,7 @@ namespace TestConsoleApp
                     Console.WriteLine("Fibonacci sayisi hesaplanacak sayiyi giriniz:");
                     int Y;
                     var fib = Console.ReadLine();
-                    while (!Int32.TryParse(fib, out Y) || (Convert.ToInt32(fib)>31))
+                    while (!Int32.TryParse(fib, out Y) || (Convert.ToInt32(fib) > 31))
                     {
                         Console.WriteLine("Not a valid number, try again. Enter a number less than 31.");
                         fib = Console.ReadLine();
@@ -54,15 +59,14 @@ namespace TestConsoleApp
                 case 3:
                     Console.WriteLine("3. secenek secildi, il ve hava durumu sorgulanacak");
                     Console.WriteLine("Hava durumu sorgusu için bir il giriniz:");
-                    var city = Console.ReadLine();
-
+                    String city = Console.ReadLine();
+                    printWeather(city);
                     break;
                 default:
                     Console.WriteLine("Gecersiz giris.");
                     break;
             }
             Console.ReadLine();
-
         }
         // iterative fibonacci number calculation
         public static int FibonacciIterative(int n)
@@ -99,7 +103,7 @@ namespace TestConsoleApp
         // print hourglass with * and in the given size
         private static void PrintHourGlass(int couter)
         {
-            for (int row = 0; row < couter ; row++)
+            for (int row = 0; row < couter; row++)
             {
                 if (couter % 2 == 0)
                 {
@@ -107,13 +111,79 @@ namespace TestConsoleApp
                         row++;
                 }
                 int starCount = Math.Abs(couter - row * 2 - 1) + 1;
-                for (int c = 0; c < couter- starCount; c++)
+                for (int c = 0; c < couter - starCount; c++)
                     Console.Write(" ");
                 for (int c = 0; c < starCount; c++)
                     Console.Write("* ");
                 Console.WriteLine();
             }
         }
+        private static void printWeather(String city)
+        {
+            string BingMapsKey = "82661c8e6e01ee9cde9679ed5629d783";
+            try
+            {
+                string locationsRequest = CreateRequest(city, BingMapsKey);
+                var JsonResponse = Get(locationsRequest);
+                //Console.WriteLine(JsonResponse);
+                Console.WriteLine();
+                Console.WriteLine("{0} city weather: ", city);
+                CityInfo cityInfo = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<CityInfo>(JsonResponse);
+                var cityWeather = cityInfo.weather[0];
+                Console.WriteLine("id: {0} ", cityWeather.id);
+                Console.WriteLine("main: {0} ", cityWeather.main);
+                Console.WriteLine("description: {0}", cityWeather.description);
+                Console.WriteLine("icon: {0}  ", cityWeather.icon);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.Read();
+            }
+        }
+        public static string Get(string url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url) ;
+            try
+            {
+                WebResponse response = request.GetResponse();
+                using (Stream responseStream = response.GetResponseStream())
+                {
+                    StreamReader reader = new StreamReader(responseStream, Encoding.UTF8);
+                    return reader.ReadToEnd();
+                }
+            }
+            catch (WebException ex)
+            {
+                WebResponse errorResponse = ex.Response;
+                using (Stream responseStream = errorResponse.GetResponseStream())
+                {
+                    StreamReader reader = new StreamReader(responseStream, Encoding.GetEncoding("utf-8"));
+                    String errorText = reader.ReadToEnd();
+                    // log errorText
+                }
+                throw;
+            }
+        }
+        public static string CreateRequest(string queryString, string BingMapsKey)
+        {
+            string UrlRequest = "http://api.openweathermap.org/data/2.5/weather?q=" +
+                                           queryString +
+                                           "&ApiKey=" + BingMapsKey;
+            return (UrlRequest);
+        }
+    }
+    public class CityInfo
+    {
+        public List<weather> weather { get; set; }
+    }
+    public class weather
+    {
+
+        public string id { get; set; }
+        public string main { get; set; }
+        public string description { get; set; }
+        public string icon { get; set; }
     }
 }
 
